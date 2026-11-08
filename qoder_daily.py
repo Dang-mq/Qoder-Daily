@@ -1146,7 +1146,7 @@ def pick_daily_campaign(rows):
 
 def claim_campaign(account, campaign_id):
     headers, _risk_note = risky_sash_headers(account, account.get("uid", ""))
-   headers["content-type"] = "application/json"
+    headers["content-type"] = "application/json"
     return request("POST", "%s%s/%s/claim" % (account["base"], CAMPAIGNS_PATH, campaign_id),
                    headers=headers, body=None)
 
