@@ -520,7 +520,7 @@ class CampaignCoreTests(unittest.TestCase):
                 FakeResponse(status, payload))
             self.assertEqual(expected, verdict, payload)
 
-    def test_claim_campaign_uses_minimal_headers_and_empty_body(self):
+    def test_claim_campaign_uses_risky_headers_and_empty_body(self):
         captured = {}
 
         def request(method, url, headers=None, body=None, **_kwargs):
@@ -530,9 +530,9 @@ class CampaignCoreTests(unittest.TestCase):
             return FakeResponse()
 
         module = load_functions(
-            "claim_campaign", "minimal_sash_headers",
+            "claim_campaign",
             CAMPAIGNS_PATH="/sash/api/v1/me/campaigns",
-            SASH_CLIENT_TYPE="qoder", SASH_USER_AGENT="test-agent",
+            risky_sash_headers=lambda account, uid="": ({"authorization": "Bearer access-token", "Cosy-MachineToken": "machine-token"}, None),
             request=request,
         )
         module["claim_campaign"](
@@ -546,8 +546,7 @@ class CampaignCoreTests(unittest.TestCase):
         self.assertEqual(
             {
                 "authorization": "Bearer access-token",
-                "cosy-clienttype": "qoder",
-                "user-agent": "test-agent",
+                "Cosy-MachineToken": "machine-token",
                 "content-type": "application/json",
             },
             captured["headers"])
